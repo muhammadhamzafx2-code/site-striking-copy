@@ -9,17 +9,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Shield,
-  Lock,
-  Zap,
-  FileCheck,
-  TrendingUp,
-  TrendingDown,
-  Globe,
-  Moon,
-  Menu,
-} from "lucide-react";
+import { Shield, Lock, Zap, FileCheck, TrendingUp, TrendingDown } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -62,45 +53,6 @@ const faqs = [
   { q: "How does Exonax ensure the security of user funds and data?", a: "Security is a top priority. Exonax stores most funds in cold wallets, protected from online threats. Accounts are safeguarded with two-factor authentication (2FA), encryption, and withdrawal whitelists." },
 ];
 
-function Logo() {
-  return (
-    <div className="flex items-center gap-2">
-      <div className="grid h-9 w-9 place-items-center rounded-lg bg-brand/15 text-brand">
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5">
-          <path d="M3 17l5-5 4 4 8-9" />
-          <path d="M14 7h6v6" />
-        </svg>
-      </div>
-      <span className="text-xl font-bold tracking-tight">EXONAX</span>
-    </div>
-  );
-}
-
-function Header() {
-  return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-background/70 border-b border-border">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-10">
-          <Logo />
-          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition">Trade</a>
-            <a href="#markets" className="hover:text-foreground transition">Markets</a>
-            <a href="#" className="hover:text-foreground transition">Buy crypto</a>
-            <a href="#benefits" className="hover:text-foreground transition">Benefits</a>
-            <a href="#faq" className="hover:text-foreground transition">More</a>
-          </nav>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="secondary" size="sm" className="hidden sm:inline-flex">Log In</Button>
-          <Button size="sm" className="bg-brand hover:bg-brand-glow text-brand-foreground font-semibold">Sign Up</Button>
-          <button className="ml-2 hidden sm:grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground"><Globe className="h-4 w-4" /></button>
-          <button className="hidden sm:grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground"><Moon className="h-4 w-4" /></button>
-          <button className="md:hidden grid h-9 w-9 place-items-center rounded-full bg-secondary"><Menu className="h-4 w-4" /></button>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 function Hero() {
   return (
@@ -299,36 +251,9 @@ function FAQ() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="border-t border-border mt-10">
-      <div className="container mx-auto px-4 py-12 grid md:grid-cols-4 gap-8 text-sm">
-        <div>
-          <Logo />
-          <p className="mt-4 text-muted-foreground">The new era of crypto asset exchange.</p>
-        </div>
-        {[
-          { title: "Products", items: ["Trade", "Markets", "Buy crypto", "VIP"] },
-          { title: "Company", items: ["About Us", "Blog", "Fee Rate", "Affiliate"] },
-          { title: "Support", items: ["Help Center", "Terms of Service", "Privacy", "Contact"] },
-        ].map((col) => (
-          <div key={col.title}>
-            <h4 className="font-semibold mb-4">{col.title}</h4>
-            <ul className="space-y-2 text-muted-foreground">
-              {col.items.map((i) => <li key={i}><a href="#" className="hover:text-brand">{i}</a></li>)}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <div className="border-t border-border py-6 text-center text-xs text-muted-foreground">© {new Date().getFullYear()} Exonax. All rights reserved.</div>
-    </footer>
-  );
-}
-
 function Index() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Header />
+    <>
       <Hero />
       <Stats />
       <Markets />
@@ -336,7 +261,6 @@ function Index() {
       <Community />
       <CTA />
       <FAQ />
-      <Footer />
-    </div>
+    </>
   );
 }

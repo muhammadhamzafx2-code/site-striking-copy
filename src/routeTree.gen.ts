@@ -9,38 +9,281 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VipRouteImport } from './routes/vip'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ReferralRouteImport } from './routes/referral'
+import { Route as PricesRouteImport } from './routes/prices'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as FeesRouteImport } from './routes/fees'
+import { Route as ExchangeRouteImport } from './routes/exchange'
+import { Route as BuyCryptoRouteImport } from './routes/buy-crypto'
+import { Route as AffiliateRouteImport } from './routes/affiliate'
+import { Route as AboutUsRouteImport } from './routes/about-us'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as HelpTermsRouteImport } from './routes/help.terms'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 
+const VipRoute = VipRouteImport.update({
+  id: '/vip',
+  path: '/vip',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReferralRoute = ReferralRouteImport.update({
+  id: '/referral',
+  path: '/referral',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricesRoute = PricesRouteImport.update({
+  id: '/prices',
+  path: '/prices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeesRoute = FeesRouteImport.update({
+  id: '/fees',
+  path: '/fees',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExchangeRoute = ExchangeRouteImport.update({
+  id: '/exchange',
+  path: '/exchange',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyCryptoRoute = BuyCryptoRouteImport.update({
+  id: '/buy-crypto',
+  path: '/buy-crypto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AffiliateRoute = AffiliateRouteImport.update({
+  id: '/affiliate',
+  path: '/affiliate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutUsRoute = AboutUsRouteImport.update({
+  id: '/about-us',
+  path: '/about-us',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpTermsRoute = HelpTermsRouteImport.update({
+  id: '/help/terms',
+  path: '/help/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about-us': typeof AboutUsRoute
+  '/affiliate': typeof AffiliateRoute
+  '/buy-crypto': typeof BuyCryptoRoute
+  '/exchange': typeof ExchangeRoute
+  '/fees': typeof FeesRoute
+  '/login': typeof LoginRoute
+  '/prices': typeof PricesRoute
+  '/referral': typeof ReferralRoute
+  '/register': typeof RegisterRoute
+  '/vip': typeof VipRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/help/terms': typeof HelpTermsRoute
+  '/blog/': typeof BlogIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about-us': typeof AboutUsRoute
+  '/affiliate': typeof AffiliateRoute
+  '/buy-crypto': typeof BuyCryptoRoute
+  '/exchange': typeof ExchangeRoute
+  '/fees': typeof FeesRoute
+  '/login': typeof LoginRoute
+  '/prices': typeof PricesRoute
+  '/referral': typeof ReferralRoute
+  '/register': typeof RegisterRoute
+  '/vip': typeof VipRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/help/terms': typeof HelpTermsRoute
+  '/blog': typeof BlogIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about-us': typeof AboutUsRoute
+  '/affiliate': typeof AffiliateRoute
+  '/buy-crypto': typeof BuyCryptoRoute
+  '/exchange': typeof ExchangeRoute
+  '/fees': typeof FeesRoute
+  '/login': typeof LoginRoute
+  '/prices': typeof PricesRoute
+  '/referral': typeof ReferralRoute
+  '/register': typeof RegisterRoute
+  '/vip': typeof VipRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/help/terms': typeof HelpTermsRoute
+  '/blog/': typeof BlogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about-us'
+    | '/affiliate'
+    | '/buy-crypto'
+    | '/exchange'
+    | '/fees'
+    | '/login'
+    | '/prices'
+    | '/referral'
+    | '/register'
+    | '/vip'
+    | '/blog/$slug'
+    | '/help/terms'
+    | '/blog/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about-us'
+    | '/affiliate'
+    | '/buy-crypto'
+    | '/exchange'
+    | '/fees'
+    | '/login'
+    | '/prices'
+    | '/referral'
+    | '/register'
+    | '/vip'
+    | '/blog/$slug'
+    | '/help/terms'
+    | '/blog'
+  id:
+    | '__root__'
+    | '/'
+    | '/about-us'
+    | '/affiliate'
+    | '/buy-crypto'
+    | '/exchange'
+    | '/fees'
+    | '/login'
+    | '/prices'
+    | '/referral'
+    | '/register'
+    | '/vip'
+    | '/blog/$slug'
+    | '/help/terms'
+    | '/blog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutUsRoute: typeof AboutUsRoute
+  AffiliateRoute: typeof AffiliateRoute
+  BuyCryptoRoute: typeof BuyCryptoRoute
+  ExchangeRoute: typeof ExchangeRoute
+  FeesRoute: typeof FeesRoute
+  LoginRoute: typeof LoginRoute
+  PricesRoute: typeof PricesRoute
+  ReferralRoute: typeof ReferralRoute
+  RegisterRoute: typeof RegisterRoute
+  VipRoute: typeof VipRoute
+  BlogSlugRoute: typeof BlogSlugRoute
+  HelpTermsRoute: typeof HelpTermsRoute
+  BlogIndexRoute: typeof BlogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vip': {
+      id: '/vip'
+      path: '/vip'
+      fullPath: '/vip'
+      preLoaderRoute: typeof VipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/referral': {
+      id: '/referral'
+      path: '/referral'
+      fullPath: '/referral'
+      preLoaderRoute: typeof ReferralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prices': {
+      id: '/prices'
+      path: '/prices'
+      fullPath: '/prices'
+      preLoaderRoute: typeof PricesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fees': {
+      id: '/fees'
+      path: '/fees'
+      fullPath: '/fees'
+      preLoaderRoute: typeof FeesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exchange': {
+      id: '/exchange'
+      path: '/exchange'
+      fullPath: '/exchange'
+      preLoaderRoute: typeof ExchangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy-crypto': {
+      id: '/buy-crypto'
+      path: '/buy-crypto'
+      fullPath: '/buy-crypto'
+      preLoaderRoute: typeof BuyCryptoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/affiliate': {
+      id: '/affiliate'
+      path: '/affiliate'
+      fullPath: '/affiliate'
+      preLoaderRoute: typeof AffiliateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about-us': {
+      id: '/about-us'
+      path: '/about-us'
+      fullPath: '/about-us'
+      preLoaderRoute: typeof AboutUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +291,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help/terms': {
+      id: '/help/terms'
+      path: '/help/terms'
+      fullPath: '/help/terms'
+      preLoaderRoute: typeof HelpTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutUsRoute: AboutUsRoute,
+  AffiliateRoute: AffiliateRoute,
+  BuyCryptoRoute: BuyCryptoRoute,
+  ExchangeRoute: ExchangeRoute,
+  FeesRoute: FeesRoute,
+  LoginRoute: LoginRoute,
+  PricesRoute: PricesRoute,
+  ReferralRoute: ReferralRoute,
+  RegisterRoute: RegisterRoute,
+  VipRoute: VipRoute,
+  BlogSlugRoute: BlogSlugRoute,
+  HelpTermsRoute: HelpTermsRoute,
+  BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

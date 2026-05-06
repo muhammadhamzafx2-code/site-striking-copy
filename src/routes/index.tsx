@@ -251,36 +251,9 @@ function FAQ() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="border-t border-border mt-10">
-      <div className="container mx-auto px-4 py-12 grid md:grid-cols-4 gap-8 text-sm">
-        <div>
-          <Logo />
-          <p className="mt-4 text-muted-foreground">The new era of crypto asset exchange.</p>
-        </div>
-        {[
-          { title: "Products", items: ["Trade", "Markets", "Buy crypto", "VIP"] },
-          { title: "Company", items: ["About Us", "Blog", "Fee Rate", "Affiliate"] },
-          { title: "Support", items: ["Help Center", "Terms of Service", "Privacy", "Contact"] },
-        ].map((col) => (
-          <div key={col.title}>
-            <h4 className="font-semibold mb-4">{col.title}</h4>
-            <ul className="space-y-2 text-muted-foreground">
-              {col.items.map((i) => <li key={i}><a href="#" className="hover:text-brand">{i}</a></li>)}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <div className="border-t border-border py-6 text-center text-xs text-muted-foreground">© {new Date().getFullYear()} Exonax. All rights reserved.</div>
-    </footer>
-  );
-}
-
 function Index() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Header />
+    <>
       <Hero />
       <Stats />
       <Markets />
@@ -288,7 +261,6 @@ function Index() {
       <Community />
       <CTA />
       <FAQ />
-      <Footer />
-    </div>
+    </>
   );
 }

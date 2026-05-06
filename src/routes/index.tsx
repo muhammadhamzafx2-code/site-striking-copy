@@ -9,17 +9,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Shield,
-  Lock,
-  Zap,
-  FileCheck,
-  TrendingUp,
-  TrendingDown,
-  Globe,
-  Moon,
-  Menu,
-} from "lucide-react";
+import { Shield, Lock, Zap, FileCheck, TrendingUp, TrendingDown } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   head: () => ({

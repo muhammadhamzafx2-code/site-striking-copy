@@ -53,45 +53,6 @@ const faqs = [
   { q: "How does Exonax ensure the security of user funds and data?", a: "Security is a top priority. Exonax stores most funds in cold wallets, protected from online threats. Accounts are safeguarded with two-factor authentication (2FA), encryption, and withdrawal whitelists." },
 ];
 
-function Logo() {
-  return (
-    <div className="flex items-center gap-2">
-      <div className="grid h-9 w-9 place-items-center rounded-lg bg-brand/15 text-brand">
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5">
-          <path d="M3 17l5-5 4 4 8-9" />
-          <path d="M14 7h6v6" />
-        </svg>
-      </div>
-      <span className="text-xl font-bold tracking-tight">EXONAX</span>
-    </div>
-  );
-}
-
-function Header() {
-  return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-background/70 border-b border-border">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-10">
-          <Logo />
-          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition">Trade</a>
-            <a href="#markets" className="hover:text-foreground transition">Markets</a>
-            <a href="#" className="hover:text-foreground transition">Buy crypto</a>
-            <a href="#benefits" className="hover:text-foreground transition">Benefits</a>
-            <a href="#faq" className="hover:text-foreground transition">More</a>
-          </nav>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="secondary" size="sm" className="hidden sm:inline-flex">Log In</Button>
-          <Button size="sm" className="bg-brand hover:bg-brand-glow text-brand-foreground font-semibold">Sign Up</Button>
-          <button className="ml-2 hidden sm:grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground"><Globe className="h-4 w-4" /></button>
-          <button className="hidden sm:grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground"><Moon className="h-4 w-4" /></button>
-          <button className="md:hidden grid h-9 w-9 place-items-center rounded-full bg-secondary"><Menu className="h-4 w-4" /></button>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 function Hero() {
   return (

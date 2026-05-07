@@ -2,14 +2,14 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// TODO: paste your Firebase web config from Project Settings → Your apps → Web app
 const firebaseConfig = {
-  apiKey: "REPLACE_ME",
-  authDomain: "REPLACE_ME.firebaseapp.com",
-  projectId: "REPLACE_ME",
-  storageBucket: "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId: "REPLACE_ME",
+  apiKey: "AIzaSyDuRPi8pUtusQgbWVKx8aKTpgRkT4m8mpg",
+  authDomain: "wallet-db538.firebaseapp.com",
+  projectId: "wallet-db538",
+  storageBucket: "wallet-db538.firebasestorage.app",
+  messagingSenderId: "622462946699",
+  appId: "1:622462946699:web:282bbc84199ba06a9cb38e",
+  measurementId: "G-1P8KCQHVKC",
 };
 
 export const app = getApps().length ? getApp() : initializeApp(firebaseConfig);

@@ -1,6 +1,13 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Globe, Moon, Menu } from "lucide-react";
+import { Globe, Moon, Menu, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Logo() {
   return (
@@ -11,7 +18,7 @@ export function Logo() {
           <path d="M14 7h6v6" />
         </svg>
       </div>
-      <span className="text-xl font-bold tracking-tight">EXONAX</span>
+      <span className="text-xl font-bold tracking-tight">XMV</span>
     </Link>
   );
 }
@@ -26,6 +33,8 @@ const navLinks = [
 ] as const;
 
 function Header() {
+  const { user, signOut } = useAuth();
+  const initial = (user?.displayName || user?.email || "?").charAt(0).toUpperCase();
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-background/70 border-b border-border">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -45,12 +54,30 @@ function Header() {
           </nav>
         </div>
         <div className="flex items-center gap-2">
-          <Link to="/login">
-            <Button variant="secondary" size="sm" className="hidden sm:inline-flex">Log In</Button>
-          </Link>
-          <Link to="/register">
-            <Button size="sm" className="bg-brand hover:bg-brand-glow text-brand-foreground font-semibold">Sign Up</Button>
-          </Link>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="grid h-9 w-9 place-items-center rounded-full bg-brand text-brand-foreground font-semibold text-sm">
+                  {initial}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem disabled className="text-xs">{user.email}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>
+                  <LogOut className="h-4 w-4 mr-2" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="secondary" size="sm" className="hidden sm:inline-flex">Log In</Button>
+              </Link>
+              <Link to="/register">
+                <Button size="sm" className="bg-brand hover:bg-brand-glow text-brand-foreground font-semibold">Sign Up</Button>
+              </Link>
+            </>
+          )}
           <button className="ml-2 hidden sm:grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground"><Globe className="h-4 w-4" /></button>
           <button className="hidden sm:grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground"><Moon className="h-4 w-4" /></button>
           <button className="md:hidden grid h-9 w-9 place-items-center rounded-full bg-secondary"><Menu className="h-4 w-4" /></button>
@@ -86,7 +113,7 @@ function Footer() {
           </div>
         ))}
       </div>
-      <div className="border-t border-border py-6 text-center text-xs text-muted-foreground">© {new Date().getFullYear()} Exonax. All rights reserved.</div>
+      <div className="border-t border-border py-6 text-center text-xs text-muted-foreground">© {new Date().getFullYear()} XMV. All rights reserved.</div>
     </footer>
   );
 }

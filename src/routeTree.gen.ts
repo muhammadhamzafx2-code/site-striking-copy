@@ -14,6 +14,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ReferralRouteImport } from './routes/referral'
 import { Route as PricesRouteImport } from './routes/prices'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeesRouteImport } from './routes/fees'
 import { Route as ExchangeRouteImport } from './routes/exchange'
 import { Route as BuyCryptoRouteImport } from './routes/buy-crypto'
@@ -47,6 +48,11 @@ const PricesRoute = PricesRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeesRoute = FeesRouteImport.update({
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/buy-crypto': typeof BuyCryptoRoute
   '/exchange': typeof ExchangeRoute
   '/fees': typeof FeesRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/prices': typeof PricesRoute
   '/referral': typeof ReferralRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/buy-crypto': typeof BuyCryptoRoute
   '/exchange': typeof ExchangeRoute
   '/fees': typeof FeesRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/prices': typeof PricesRoute
   '/referral': typeof ReferralRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/buy-crypto': typeof BuyCryptoRoute
   '/exchange': typeof ExchangeRoute
   '/fees': typeof FeesRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/prices': typeof PricesRoute
   '/referral': typeof ReferralRoute
@@ -153,6 +162,7 @@ export interface FileRouteTypes {
     | '/buy-crypto'
     | '/exchange'
     | '/fees'
+    | '/forgot-password'
     | '/login'
     | '/prices'
     | '/referral'
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/buy-crypto'
     | '/exchange'
     | '/fees'
+    | '/forgot-password'
     | '/login'
     | '/prices'
     | '/referral'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/buy-crypto'
     | '/exchange'
     | '/fees'
+    | '/forgot-password'
     | '/login'
     | '/prices'
     | '/referral'
@@ -202,6 +214,7 @@ export interface RootRouteChildren {
   BuyCryptoRoute: typeof BuyCryptoRoute
   ExchangeRoute: typeof ExchangeRoute
   FeesRoute: typeof FeesRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   PricesRoute: typeof PricesRoute
   ReferralRoute: typeof ReferralRoute
@@ -247,6 +260,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fees': {
@@ -322,6 +342,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuyCryptoRoute: BuyCryptoRoute,
   ExchangeRoute: ExchangeRoute,
   FeesRoute: FeesRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   PricesRoute: PricesRoute,
   ReferralRoute: ReferralRoute,

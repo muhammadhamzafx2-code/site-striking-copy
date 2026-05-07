@@ -14,8 +14,8 @@ export const posts = [
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
-      { title: "Exonax Blog — Crypto News & Guides" },
-      { name: "description", content: "News, guides and analysis from the Exonax team." },
+      { title: "XMV Blog — Crypto News & Guides" },
+      { name: "description", content: "News, guides and analysis from the XMV team." },
     ],
   }),
   component: BlogIndex,

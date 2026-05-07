@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/affiliate")({
   head: () => ({
     meta: [
-      { title: "Affiliate Program — Earn up to 50% | Exonax" },
-      { name: "description", content: "Promote Exonax and earn lifetime commissions on your referrals' trading fees." },
+      { title: "Affiliate Program — Earn up to 50% | XMV" },
+      { name: "description", content: "Promote XMV and earn lifetime commissions on your referrals' trading fees." },
     ],
   }),
   component: AffiliatePage,

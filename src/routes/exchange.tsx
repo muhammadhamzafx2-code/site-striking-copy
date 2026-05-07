@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/exchange")({
   head: () => ({
     meta: [
-      { title: "Spot Exchange — Trade Crypto | Exonax" },
+      { title: "Spot Exchange — Trade Crypto | XMV" },
       { name: "description", content: "Trade BTC, ETH and 100+ altcoins on a fast, liquid spot exchange." },
     ],
   }),

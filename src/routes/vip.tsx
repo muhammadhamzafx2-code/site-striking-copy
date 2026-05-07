@@ -6,8 +6,8 @@ import { Crown, Headphones, Zap, Gift } from "lucide-react";
 export const Route = createFileRoute("/vip")({
   head: () => ({
     meta: [
-      { title: "VIP Program — Exclusive Benefits | Exonax" },
-      { name: "description", content: "Unlock dedicated support, lower fees and exclusive perks with the Exonax VIP program." },
+      { title: "VIP Program — Exclusive Benefits | XMV" },
+      { name: "description", content: "Unlock dedicated support, lower fees and exclusive perks with the XMV VIP program." },
     ],
   }),
   component: VipPage,
@@ -23,7 +23,7 @@ const perks = [
 function VipPage() {
   return (
     <>
-      <PageHeader title="Exonax VIP" subtitle="Built for high-volume traders and institutions." />
+      <PageHeader title="XMV VIP" subtitle="Built for high-volume traders and institutions." />
       <section className="container mx-auto px-4 py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {perks.map((p) => (
           <Card key={p.title} className="p-6 border-border">

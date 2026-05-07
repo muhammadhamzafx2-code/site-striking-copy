@@ -1,4 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { z } from "zod";
+import { toast } from "sonner";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import heroImg from "@/assets/hero-rocket.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +20,7 @@ import { Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Exonax — Buy & sell crypto in minutes" },
+      { title: "XMV — Buy & sell crypto in minutes" },
       {
         name: "description",
         content:
@@ -46,15 +51,35 @@ const benefits = [
 
 const faqs = [
   { q: "What is a Cryptocurrency Exchange?", a: "A cryptocurrency exchange is an online marketplace where users can buy, sell, and trade digital assets such as Bitcoin, Ethereum, and many others. These platforms provide secure transactions, liquidity, and user-friendly tools that make trading accessible for both beginners and professionals." },
-  { q: "What product does Exonax offer?", a: "Exonax is a versatile platform that covers all key needs of crypto traders. It offers spot trading with high liquidity, futures contracts with leverage, copy trading, and automated bots for hands-off strategies." },
-  { q: "How to Buy Bitcoin and Other Cryptocurrencies on Exonax?", a: "Create an account and complete verification (KYC). Then fund your account using fiat or crypto deposits. Once your balance is ready, you can buy Bitcoin, Ethereum, stablecoins, or other popular assets instantly." },
-  { q: "How to Track Cryptocurrency Prices on Exonax in Real Time?", a: "Exonax provides live price charts, trading volumes, and historical data so you can monitor the market at any time. Interactive charts with indicators help traders analyze trends and plan strategies." },
-  { q: "How to trade cryptocurrencies on Exonax?", a: "After funding your account, you can start trading in the spot market or explore futures with leverage. The platform offers professional tools such as real-time charts, technical indicators, stop-loss and take-profit orders." },
-  { q: "How does Exonax ensure the security of user funds and data?", a: "Security is a top priority. Exonax stores most funds in cold wallets, protected from online threats. Accounts are safeguarded with two-factor authentication (2FA), encryption, and withdrawal whitelists." },
+  { q: "What product does XMV offer?", a: "XMV is a versatile platform that covers all key needs of crypto traders. It offers spot trading with high liquidity, futures contracts with leverage, copy trading, and automated bots for hands-off strategies." },
+  { q: "How to Buy Bitcoin and Other Cryptocurrencies on XMV?", a: "Create an account and complete verification (KYC). Then fund your account using fiat or crypto deposits. Once your balance is ready, you can buy Bitcoin, Ethereum, stablecoins, or other popular assets instantly." },
+  { q: "How to Track Cryptocurrency Prices on XMV in Real Time?", a: "XMV provides live price charts, trading volumes, and historical data so you can monitor the market at any time. Interactive charts with indicators help traders analyze trends and plan strategies." },
+  { q: "How to trade cryptocurrencies on XMV?", a: "After funding your account, you can start trading in the spot market or explore futures with leverage. The platform offers professional tools such as real-time charts, technical indicators, stop-loss and take-profit orders." },
+  { q: "How does XMV ensure the security of user funds and data?", a: "Security is a top priority. XMV stores most funds in cold wallets, protected from online threats. Accounts are safeguarded with two-factor authentication (2FA), encryption, and withdrawal whitelists." },
 ];
 
 
 function Hero() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const parsed = z.string().trim().email().max(255).safeParse(email);
+    if (!parsed.success) return toast.error("Please enter a valid email");
+    setLoading(true);
+    try {
+      await addDoc(collection(db, "subscribers"), {
+        email: parsed.data,
+        createdAt: serverTimestamp(),
+      });
+      toast.success("Thanks! You're on the list.");
+      setEmail("");
+    } catch (err: any) {
+      toast.error(err.message ?? "Could not subscribe");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <section className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
       <div className="container mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
@@ -66,13 +91,17 @@ function Hero() {
           <p className="mt-6 text-lg text-muted-foreground max-w-md">
             Trade Bitcoin, Ethereum, USDT, and the top altcoins on the new era of crypto asset exchange.
           </p>
-          <form className="mt-8 flex items-center gap-2 rounded-full bg-card p-2 pl-5 max-w-md border border-border shadow-[var(--shadow-glow)]">
+          <form onSubmit={onSubmit} className="mt-8 flex items-center gap-2 rounded-full bg-card p-2 pl-5 max-w-md border border-border shadow-[var(--shadow-glow)]">
             <Input
               type="email"
               placeholder="Enter your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="border-0 bg-transparent focus-visible:ring-0 shadow-none px-0"
             />
-            <Button className="rounded-full bg-brand hover:bg-brand-glow text-brand-foreground font-semibold px-6">Get Started</Button>
+            <Button type="submit" disabled={loading} className="rounded-full bg-brand hover:bg-brand-glow text-brand-foreground font-semibold px-6">
+              {loading ? "..." : "Get Started"}
+            </Button>
           </form>
           <div className="mt-6">
             <button className="grid h-12 w-12 place-items-center rounded-full bg-card border border-border hover:bg-secondary transition">
@@ -115,7 +144,7 @@ function Markets() {
       <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
         <div>
           <h2 className="text-3xl md:text-4xl font-bold">Markets</h2>
-          <p className="text-muted-foreground mt-2">Top assets by volume on Exonax.</p>
+          <p className="text-muted-foreground mt-2">Top assets by volume on XMV.</p>
         </div>
         <div className="flex gap-2 text-sm">
           {["All", "Top Gainers", "Top Losers", "Recently Added"].map((t, i) => (
@@ -175,7 +204,7 @@ function Benefits() {
   return (
     <section id="benefits" className="container mx-auto px-4 py-20">
       <div className="text-center max-w-2xl mx-auto mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold">Why choose Exonax</h2>
+        <h2 className="text-3xl md:text-4xl font-bold">Why choose XMV</h2>
         <p className="text-muted-foreground mt-3">Built on security, transparency, and reliability.</p>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -195,14 +224,14 @@ function Benefits() {
 
 function Community() {
   const socials = [
-    { name: "Twitter | X", handle: "@exonax_crypto", icon: "𝕏" },
-    { name: "Telegram", handle: "@exonax_exchange", icon: "✈" },
-    { name: "Instagram", handle: "@exonax_world", icon: "◎" },
+    { name: "Twitter | X", handle: "@xmv_crypto", icon: "𝕏" },
+    { name: "Telegram", handle: "@xmv_exchange", icon: "✈" },
+    { name: "Instagram", handle: "@xmv_world", icon: "◎" },
   ];
   return (
     <section className="container mx-auto px-4 py-20">
       <div className="text-center max-w-2xl mx-auto mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold">Join the Exonax community</h2>
+        <h2 className="text-3xl md:text-4xl font-bold">Join the XMV community</h2>
         <p className="text-muted-foreground mt-3">Stay updated with the latest news, updates, and exclusive promotions.</p>
       </div>
       <div className="grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
@@ -227,7 +256,7 @@ function CTA() {
         <div className="absolute inset-0 opacity-30 pointer-events-none" style={{ background: "radial-gradient(circle at 50% 50%, var(--brand) 0%, transparent 50%)" }} />
         <div className="relative">
           <h2 className="text-3xl md:text-5xl font-bold">Start your crypto journey right now!</h2>
-          <p className="text-muted-foreground mt-4 max-w-xl mx-auto">Unlock the world of digital assets and earn with Exonax.</p>
+          <p className="text-muted-foreground mt-4 max-w-xl mx-auto">Unlock the world of digital assets and earn with XMV.</p>
           <Button size="lg" className="mt-8 rounded-full bg-brand hover:bg-brand-glow text-brand-foreground font-semibold px-8">Register Now</Button>
         </div>
       </Card>

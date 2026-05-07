@@ -1,6 +1,13 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Globe, Moon, Menu } from "lucide-react";
+import { Globe, Moon, Menu, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Logo() {
   return (

@@ -55,6 +55,26 @@ const faqs = [
 
 
 function Hero() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const parsed = z.string().trim().email().max(255).safeParse(email);
+    if (!parsed.success) return toast.error("Please enter a valid email");
+    setLoading(true);
+    try {
+      await addDoc(collection(db, "subscribers"), {
+        email: parsed.data,
+        createdAt: serverTimestamp(),
+      });
+      toast.success("Thanks! You're on the list.");
+      setEmail("");
+    } catch (err: any) {
+      toast.error(err.message ?? "Could not subscribe");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <section className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
       <div className="container mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
@@ -66,13 +86,17 @@ function Hero() {
           <p className="mt-6 text-lg text-muted-foreground max-w-md">
             Trade Bitcoin, Ethereum, USDT, and the top altcoins on the new era of crypto asset exchange.
           </p>
-          <form className="mt-8 flex items-center gap-2 rounded-full bg-card p-2 pl-5 max-w-md border border-border shadow-[var(--shadow-glow)]">
+          <form onSubmit={onSubmit} className="mt-8 flex items-center gap-2 rounded-full bg-card p-2 pl-5 max-w-md border border-border shadow-[var(--shadow-glow)]">
             <Input
               type="email"
               placeholder="Enter your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="border-0 bg-transparent focus-visible:ring-0 shadow-none px-0"
             />
-            <Button className="rounded-full bg-brand hover:bg-brand-glow text-brand-foreground font-semibold px-6">Get Started</Button>
+            <Button type="submit" disabled={loading} className="rounded-full bg-brand hover:bg-brand-glow text-brand-foreground font-semibold px-6">
+              {loading ? "..." : "Get Started"}
+            </Button>
           </form>
           <div className="mt-6">
             <button className="grid h-12 w-12 place-items-center rounded-full bg-card border border-border hover:bg-secondary transition">

@@ -1,4 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { z } from "zod";
+import { toast } from "sonner";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import heroImg from "@/assets/hero-rocket.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

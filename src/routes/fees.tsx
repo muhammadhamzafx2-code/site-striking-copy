@@ -5,8 +5,8 @@ import { Card } from "@/components/ui/card";
 export const Route = createFileRoute("/fees")({
   head: () => ({
     meta: [
-      { title: "Trading Fees & Limits | Exonax" },
-      { name: "description", content: "Industry-low trading, deposit and withdrawal fees on Exonax." },
+      { title: "Trading Fees & Limits | XMV" },
+      { name: "description", content: "Industry-low trading, deposit and withdrawal fees on XMV." },
     ],
   }),
   component: FeesPage,

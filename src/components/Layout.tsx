@@ -11,7 +11,7 @@ export function Logo() {
           <path d="M14 7h6v6" />
         </svg>
       </div>
-      <span className="text-xl font-bold tracking-tight">EXONAX</span>
+      <span className="text-xl font-bold tracking-tight">XMV</span>
     </Link>
   );
 }
@@ -86,7 +86,7 @@ function Footer() {
           </div>
         ))}
       </div>
-      <div className="border-t border-border py-6 text-center text-xs text-muted-foreground">© {new Date().getFullYear()} Exonax. All rights reserved.</div>
+      <div className="border-t border-border py-6 text-center text-xs text-muted-foreground">© {new Date().getFullYear()} XMV. All rights reserved.</div>
     </footer>
   );
 }

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/buy-crypto")({
   head: () => ({
     meta: [
-      { title: "Buy Crypto with Card — Instant | Exonax" },
+      { title: "Buy Crypto with Card — Instant | XMV" },
       { name: "description", content: "Buy Bitcoin, Ethereum and USDT with credit card or bank transfer in minutes." },
     ],
   }),

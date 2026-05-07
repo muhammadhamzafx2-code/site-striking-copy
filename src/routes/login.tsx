@@ -6,8 +6,8 @@ import { Logo } from "@/components/Layout";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Log In to Exonax" },
-      { name: "description", content: "Access your Exonax account to trade, deposit and manage your portfolio." },
+      { title: "Log In to XMV" },
+      { name: "description", content: "Access your XMV account to trade, deposit and manage your portfolio." },
     ],
   }),
   component: LoginPage,
@@ -25,7 +25,7 @@ function LoginPage() {
           <Button className="w-full bg-brand hover:bg-brand-glow text-brand-foreground font-semibold">Log In</Button>
         </form>
         <p className="text-sm text-muted-foreground text-center mt-6">
-          New to Exonax? <Link to="/register" className="text-brand">Sign up</Link>
+          New to XMV? <Link to="/register" className="text-brand">Sign up</Link>
         </p>
       </Card>
     </div>

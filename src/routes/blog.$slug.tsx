@@ -10,8 +10,8 @@ export const Route = createFileRoute("/blog/$slug")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${loaderData?.title ?? "Article"} — Exonax Blog` },
-      { name: "description", content: loaderData?.excerpt ?? "Exonax blog article." },
+      { title: `${loaderData?.title ?? "Article"} — XMV Blog` },
+      { name: "description", content: loaderData?.excerpt ?? "XMV blog article." },
     ],
   }),
   notFoundComponent: () => (
@@ -33,7 +33,7 @@ function BlogPost() {
       <PageHeader title={post.title} subtitle={post.date} />
       <article className="container mx-auto px-4 py-12 max-w-2xl space-y-4 text-muted-foreground leading-relaxed">
         <p className="text-lg text-foreground">{post.excerpt}</p>
-        <p>This is a sample article on the Exonax blog. Content will be populated by the editorial team and cover topics across trading, security, market analysis and platform features.</p>
+        <p>This is a sample article on the XMV blog. Content will be populated by the editorial team and cover topics across trading, security, market analysis and platform features.</p>
         <p>Stay tuned for more in-depth content from our research desk.</p>
         <Link to="/blog" className="text-brand inline-block pt-6">← Back to all articles</Link>
       </article>

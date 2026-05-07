@@ -21,7 +21,7 @@ const coins = [
 export const Route = createFileRoute("/prices")({
   head: () => ({
     meta: [
-      { title: "Crypto Prices — Live Market Data | Exonax" },
+      { title: "Crypto Prices — Live Market Data | XMV" },
       { name: "description", content: "Track real-time prices, 24h volume, and market cap of Bitcoin, Ethereum and top altcoins." },
     ],
   }),

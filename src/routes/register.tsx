@@ -6,8 +6,8 @@ import { Logo } from "@/components/Layout";
 export const Route = createFileRoute("/register")({
   head: () => ({
     meta: [
-      { title: "Create your Exonax account" },
-      { name: "description", content: "Sign up for Exonax in seconds and start trading crypto." },
+      { title: "Create your XMV account" },
+      { name: "description", content: "Sign up for XMV in seconds and start trading crypto." },
     ],
   }),
   component: RegisterPage,

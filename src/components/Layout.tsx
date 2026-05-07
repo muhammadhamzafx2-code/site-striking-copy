@@ -33,6 +33,8 @@ const navLinks = [
 ] as const;
 
 function Header() {
+  const { user, signOut } = useAuth();
+  const initial = (user?.displayName || user?.email || "?").charAt(0).toUpperCase();
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-background/70 border-b border-border">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -52,12 +54,30 @@ function Header() {
           </nav>
         </div>
         <div className="flex items-center gap-2">
-          <Link to="/login">
-            <Button variant="secondary" size="sm" className="hidden sm:inline-flex">Log In</Button>
-          </Link>
-          <Link to="/register">
-            <Button size="sm" className="bg-brand hover:bg-brand-glow text-brand-foreground font-semibold">Sign Up</Button>
-          </Link>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="grid h-9 w-9 place-items-center rounded-full bg-brand text-brand-foreground font-semibold text-sm">
+                  {initial}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem disabled className="text-xs">{user.email}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>
+                  <LogOut className="h-4 w-4 mr-2" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="secondary" size="sm" className="hidden sm:inline-flex">Log In</Button>
+              </Link>
+              <Link to="/register">
+                <Button size="sm" className="bg-brand hover:bg-brand-glow text-brand-foreground font-semibold">Sign Up</Button>
+              </Link>
+            </>
+          )}
           <button className="ml-2 hidden sm:grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground"><Globe className="h-4 w-4" /></button>
           <button className="hidden sm:grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground"><Moon className="h-4 w-4" /></button>
           <button className="md:hidden grid h-9 w-9 place-items-center rounded-full bg-secondary"><Menu className="h-4 w-4" /></button>

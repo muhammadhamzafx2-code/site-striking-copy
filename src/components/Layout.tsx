@@ -1,6 +1,6 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Globe, Moon, Menu, LogOut } from "lucide-react";
+import { Globe, Moon, Menu, LogOut, Wallet, User as UserIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -63,6 +63,12 @@ function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem disabled className="text-xs">{user.email}</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/wallets"><Wallet className="h-4 w-4 mr-2" /> Wallets</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/account/profile"><UserIcon className="h-4 w-4 mr-2" /> Account</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => signOut()}>
                   <LogOut className="h-4 w-4 mr-2" /> Sign out
                 </DropdownMenuItem>

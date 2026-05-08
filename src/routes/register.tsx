@@ -5,11 +5,12 @@ import { Logo } from "@/components/Layout";
 import { useState } from "react";
 import { z } from "zod";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { auth, db, googleProvider } from "@/lib/firebase";
+import { auth, googleProvider } from "@/lib/firebase";
 import { toast } from "sonner";
+import { ensureUserDoc, logActivity, logSession } from "@/lib/userData";
 
 export const Route = createFileRoute("/register")({
+  validateSearch: (s: Record<string, unknown>) => ({ ref: typeof s.ref === "string" ? s.ref : undefined }),
   head: () => ({
     meta: [
       { title: "Create your XMV account" },
@@ -27,10 +28,17 @@ const schema = z.object({
 
 function RegisterPage() {
   const navigate = useNavigate();
+  const { ref } = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [referralCode, setReferralCode] = useState("");
+  const [referralCode, setReferralCode] = useState(ref ?? "");
   const [loading, setLoading] = useState(false);
+
+  const finish = async (uid: string) => {
+    await logActivity(uid, "signup");
+    await logSession(uid);
+    navigate({ to: "/wallets" });
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,13 +47,9 @@ function RegisterPage() {
     setLoading(true);
     try {
       const res = await createUserWithEmailAndPassword(auth, parsed.data.email, parsed.data.password);
-      await setDoc(doc(db, "users", res.user.uid), {
-        email: res.user.email,
-        referralCode: parsed.data.referralCode ?? null,
-        createdAt: serverTimestamp(),
-      });
+      await ensureUserDoc(res.user, { referredBy: parsed.data.referralCode ?? null });
       toast.success("Account created");
-      navigate({ to: "/" });
+      await finish(res.user.uid);
     } catch (err: any) {
       toast.error(err.message ?? "Sign up failed");
     } finally {
@@ -57,12 +61,8 @@ function RegisterPage() {
     setLoading(true);
     try {
       const res = await signInWithPopup(auth, googleProvider);
-      await setDoc(
-        doc(db, "users", res.user.uid),
-        { email: res.user.email, displayName: res.user.displayName, createdAt: serverTimestamp() },
-        { merge: true }
-      );
-      navigate({ to: "/" });
+      await ensureUserDoc(res.user, { referredBy: referralCode || null });
+      await finish(res.user.uid);
     } catch (err: any) {
       toast.error(err.message ?? "Google sign-in failed");
     } finally {

@@ -1,76 +1,116 @@
-## 1. Rebrand Exonax → XMV (full rename)
+## Goal
 
-Sweep every route/component and replace brand strings:
-- `src/components/Layout.tsx` — logo wordmark `EXONAX` → `XMV`, footer tagline.
-- `src/routes/index.tsx` — page `<title>`, meta description, hero copy, FAQ answers, CTA, community handles (`@xmv_crypto`, `@xmv_exchange`, `@xmv_world`).
-- `src/routes/{exchange,prices,buy-crypto,fees,vip,about-us,affiliate,referral,blog.index,blog.$slug,login,register,help.terms}.tsx` — every `head().meta` title/description, page copy, and any inline "Exonax" string.
-- Footer copyright → `© {year} XMV. All rights reserved.`
+Port the protected pages from `muhammadhamzafx2-code/xmvwallet` into our TanStack Start app, gate them behind Firebase Auth, and back them with per-user data in Firestore so every user has their own balances, activities, sessions, etc.
 
-After rename: `rg -i exonax` should return zero hits.
+## What's in the GitHub repo
 
-## 2. Firebase setup
+Static HTML/CSS/JS (Exonax dashboard). New pages to add (others like exchange/fees/vip/affiliate/referral/terms are already in our app):
 
-Once you paste the config (apiKey, authDomain, projectId, appId, etc.), I'll:
+- `wallets.html` → balances per coin, deposit/withdraw
+- `profile.html` → name, email, phone, country, avatar
+- `activities.html` → transaction/login activity log
+- `sessions.html` → active login sessions
+- `verification.html` → KYC submission state
+- `2fa.html` → enable/disable 2FA (TOTP)
+- `password.html` → change password
+- `referrals.html` → user's referral code, invitees, earnings
 
-- `bun add firebase`
-- Create `src/lib/firebase.ts` exporting `app`, `auth`, `db`, `googleProvider`. Web API keys are public, so the config is hardcoded here — safe and standard for Firebase web.
-- Create `src/hooks/useAuth.tsx` — a context provider wrapping `onAuthStateChanged`, exposing `user`, `loading`, `signOut`. Mounted in `src/routes/__root.tsx`.
+Styling will be redone in our existing Tailwind/shadcn design system (XMV brand) — we're not copying the raw Exonax CSS. Layout/sections come from the HTML as reference.
 
-## 3. Auth pages
+## Plan
 
-**`src/routes/register.tsx`**
-- Zod-validated form (email, password ≥8, optional referral code).
-- `createUserWithEmailAndPassword` → on success: write `users/{uid}` doc `{ email, createdAt: serverTimestamp(), referralCode }` via Firestore `setDoc`.
-- "Continue with Google" button → `signInWithPopup(googleProvider)` → upsert profile doc with `setDoc({...}, { merge: true })`.
-- Redirect to `/` on success; toast errors with `sonner`.
+### 1. Route protection
 
-**`src/routes/login.tsx`**
-- Email/password via `signInWithEmailAndPassword` + Google button.
-- "Forgot password?" link → `/forgot-password`.
+- Create `src/routes/_authenticated.tsx` — pathless layout. `beforeLoad` waits for `useAuth` state via a small auth-state helper, redirects to `/login?redirect=...` if no user.
+- Update `src/routes/login.tsx` to honor `?redirect=` and bounce back after sign-in.
+- Add an "Account" sidebar layout under `_authenticated` (`src/routes/_authenticated/account.tsx`) with nav links to all dashboard pages, rendered around `<Outlet />`.
 
-**New `src/routes/forgot-password.tsx`**
-- Email input → `sendPasswordResetEmail(auth, email, { url: window.location.origin + '/login' })`.
-- Success toast: "Check your inbox."
+### 2. Protected route files
 
-(No separate reset page needed — Firebase hosts the reset form and redirects back to `/login`.)
+Create:
 
-## 4. Header auth state
+```
+src/routes/_authenticated/
+  wallets.tsx
+  account.tsx              (sidebar layout)
+  account.profile.tsx
+  account.activities.tsx
+  account.sessions.tsx
+  account.verification.tsx
+  account.2fa.tsx
+  account.password.tsx
+  account.referrals.tsx
+```
 
-In `src/components/Layout.tsx`:
-- Read `user` from `useAuth()`.
-- If signed in: replace Log In / Sign Up buttons with avatar initial + dropdown (`Account`, `Sign out`).
-- If signed out: keep current buttons.
+Update header dropdown (`src/components/Layout.tsx`) to link to `/wallets` and `/account/profile`.
 
-## 5. Newsletter capture (hero email form)
+### 3. Firestore data model
 
-In `src/routes/index.tsx` `Hero`:
-- Convert form to controlled input with zod email validation.
-- On submit → `addDoc(collection(db, 'subscribers'), { email, createdAt: serverTimestamp() })`.
-- Show sonner toast on success/error; clear input.
+All under `users/{uid}`:
 
-## 6. Firestore security rules (you paste into Firebase console)
+```
+users/{uid}                       { email, displayName, phone, country, avatarUrl,
+                                     referralCode, referredBy, kycStatus, twoFAEnabled,
+                                     createdAt, updatedAt }
+users/{uid}/balances/{asset}      { asset, free, locked, updatedAt }      // BTC, ETH, USDT...
+users/{uid}/activities/{id}       { type, amount, asset, status, ip, createdAt }
+users/{uid}/sessions/{id}         { device, ip, location, lastSeen, current }
+users/{uid}/verification/current  { level, idType, idNumber, status, submittedAt }
+users/{uid}/referrals/{inviteeUid}{ inviteeEmail, joinedAt, earnings }
+```
 
-I'll include the rules text in chat:
+- On signup, seed `users/{uid}` plus zero-balance docs for BTC/ETH/USDT.
+- On login, write a session doc and an `activities` "login" entry.
 
-```text
-rules_version = '2';
+### 4. Page behavior
+
+- **Wallets**: live `onSnapshot` of `balances` subcollection; "Deposit" shows generated address (mock per asset), "Withdraw" form writes a pending activity.
+- **Profile**: form bound to `users/{uid}`, `updateDoc` on save; avatar upload to Firebase Storage `avatars/{uid}`.
+- **Activities**: paginated `query(orderBy createdAt desc, limit 25)`.
+- **Sessions**: list current sessions; "Revoke" deletes doc (and signs out if it's the current session).
+- **Verification**: form to upload ID image to Storage `kyc/{uid}/`, sets `verification/current.status = 'pending'`.
+- **2FA**: toggle flag + show TOTP secret/QR (using `otpauth` lib, secret stored in user doc — OK for now, no server).
+- **Password**: `updatePassword(auth.currentUser, newPassword)` with re-auth via `reauthenticateWithCredential`.
+- **Referrals**: show `referralCode`, list of invitees from `referrals` subcollection.
+
+### 5. Firestore security rules (you paste in console)
+
+```
+rules_version='2';
 service cloud.firestore {
-  match /databases/{database}/documents {
+  match /databases/{db}/documents {
     match /users/{uid} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
+      match /{sub=**} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
     }
     match /subscribers/{doc} {
-      allow create: if request.resource.data.keys().hasOnly(['email','createdAt'])
-        && request.resource.data.email is string
-        && request.resource.data.email.size() < 255;
+      allow create: if request.resource.data.keys().hasOnly(['email','createdAt']);
       allow read, update, delete: if false;
     }
   }
 }
 ```
 
-Plus: in Firebase console enable **Email/Password** and **Google** providers, and add `localhost` + your Lovable preview/published domains to Authorized domains.
+Storage rules: only the owning user can read/write `avatars/{uid}/*` and `kyc/{uid}/*`.
 
-## What I need from you
+### 6. New deps
 
-Paste your Firebase web config object (the `firebaseConfig = { apiKey: "...", ... }` snippet from Project settings → Your apps → Web app). I'll wire everything up after that.
+- `firebase/storage` (already part of installed `firebase` SDK — just import)
+- `otpauth` for 2FA TOTP generation
+- `qrcode.react` to render the 2FA QR
+
+### 7. Out of scope (call out to user)
+
+- Real custodial balances / on-chain deposits — balances are app-level numbers in Firestore, not real crypto. Same for "deposit addresses".
+- True session enforcement (revoking a Firebase session from another device requires a token-revocation backend; we'll mark them inactive in Firestore as a UX-level approximation).
+- KYC verification approval workflow (no admin panel yet).
+
+## What I need from you to proceed
+
+Confirm the scope above, and especially:
+
+1. OK that balances/deposits are simulated app numbers (not real crypto)?
+2. OK that 2FA secret is stored in the user's Firestore doc (no server)?
+3. Want me to also enable Firebase Storage now (for avatar + KYC uploads)?

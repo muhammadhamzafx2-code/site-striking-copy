@@ -20,10 +20,20 @@ import { Route as ExchangeRouteImport } from './routes/exchange'
 import { Route as BuyCryptoRouteImport } from './routes/buy-crypto'
 import { Route as AffiliateRouteImport } from './routes/affiliate'
 import { Route as AboutUsRouteImport } from './routes/about-us'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as HelpTermsRouteImport } from './routes/help.terms'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as AuthenticatedWalletsRouteImport } from './routes/_authenticated/wallets'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as AuthenticatedAccountVerificationRouteImport } from './routes/_authenticated/account.verification'
+import { Route as AuthenticatedAccountSessionsRouteImport } from './routes/_authenticated/account.sessions'
+import { Route as AuthenticatedAccountReferralsRouteImport } from './routes/_authenticated/account.referrals'
+import { Route as AuthenticatedAccountProfileRouteImport } from './routes/_authenticated/account.profile'
+import { Route as AuthenticatedAccountPasswordRouteImport } from './routes/_authenticated/account.password'
+import { Route as AuthenticatedAccountActivitiesRouteImport } from './routes/_authenticated/account.activities'
+import { Route as AuthenticatedAccount2faRouteImport } from './routes/_authenticated/account.2fa'
 
 const VipRoute = VipRouteImport.update({
   id: '/vip',
@@ -80,6 +90,10 @@ const AboutUsRoute = AboutUsRouteImport.update({
   path: '/about-us',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -100,6 +114,57 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedWalletsRoute = AuthenticatedWalletsRouteImport.update({
+  id: '/wallets',
+  path: '/wallets',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAccountVerificationRoute =
+  AuthenticatedAccountVerificationRouteImport.update({
+    id: '/verification',
+    path: '/verification',
+    getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
+const AuthenticatedAccountSessionsRoute =
+  AuthenticatedAccountSessionsRouteImport.update({
+    id: '/sessions',
+    path: '/sessions',
+    getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
+const AuthenticatedAccountReferralsRoute =
+  AuthenticatedAccountReferralsRouteImport.update({
+    id: '/referrals',
+    path: '/referrals',
+    getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
+const AuthenticatedAccountProfileRoute =
+  AuthenticatedAccountProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
+const AuthenticatedAccountPasswordRoute =
+  AuthenticatedAccountPasswordRouteImport.update({
+    id: '/password',
+    path: '/password',
+    getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
+const AuthenticatedAccountActivitiesRoute =
+  AuthenticatedAccountActivitiesRouteImport.update({
+    id: '/activities',
+    path: '/activities',
+    getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
+const AuthenticatedAccount2faRoute = AuthenticatedAccount2faRouteImport.update({
+  id: '/2fa',
+  path: '/2fa',
+  getParentRoute: () => AuthenticatedAccountRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -114,9 +179,18 @@ export interface FileRoutesByFullPath {
   '/referral': typeof ReferralRoute
   '/register': typeof RegisterRoute
   '/vip': typeof VipRoute
+  '/account': typeof AuthenticatedAccountRouteWithChildren
+  '/wallets': typeof AuthenticatedWalletsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/help/terms': typeof HelpTermsRoute
   '/blog/': typeof BlogIndexRoute
+  '/account/2fa': typeof AuthenticatedAccount2faRoute
+  '/account/activities': typeof AuthenticatedAccountActivitiesRoute
+  '/account/password': typeof AuthenticatedAccountPasswordRoute
+  '/account/profile': typeof AuthenticatedAccountProfileRoute
+  '/account/referrals': typeof AuthenticatedAccountReferralsRoute
+  '/account/sessions': typeof AuthenticatedAccountSessionsRoute
+  '/account/verification': typeof AuthenticatedAccountVerificationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -131,13 +205,23 @@ export interface FileRoutesByTo {
   '/referral': typeof ReferralRoute
   '/register': typeof RegisterRoute
   '/vip': typeof VipRoute
+  '/account': typeof AuthenticatedAccountRouteWithChildren
+  '/wallets': typeof AuthenticatedWalletsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/help/terms': typeof HelpTermsRoute
   '/blog': typeof BlogIndexRoute
+  '/account/2fa': typeof AuthenticatedAccount2faRoute
+  '/account/activities': typeof AuthenticatedAccountActivitiesRoute
+  '/account/password': typeof AuthenticatedAccountPasswordRoute
+  '/account/profile': typeof AuthenticatedAccountProfileRoute
+  '/account/referrals': typeof AuthenticatedAccountReferralsRoute
+  '/account/sessions': typeof AuthenticatedAccountSessionsRoute
+  '/account/verification': typeof AuthenticatedAccountVerificationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about-us': typeof AboutUsRoute
   '/affiliate': typeof AffiliateRoute
   '/buy-crypto': typeof BuyCryptoRoute
@@ -149,9 +233,18 @@ export interface FileRoutesById {
   '/referral': typeof ReferralRoute
   '/register': typeof RegisterRoute
   '/vip': typeof VipRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRouteWithChildren
+  '/_authenticated/wallets': typeof AuthenticatedWalletsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/help/terms': typeof HelpTermsRoute
   '/blog/': typeof BlogIndexRoute
+  '/_authenticated/account/2fa': typeof AuthenticatedAccount2faRoute
+  '/_authenticated/account/activities': typeof AuthenticatedAccountActivitiesRoute
+  '/_authenticated/account/password': typeof AuthenticatedAccountPasswordRoute
+  '/_authenticated/account/profile': typeof AuthenticatedAccountProfileRoute
+  '/_authenticated/account/referrals': typeof AuthenticatedAccountReferralsRoute
+  '/_authenticated/account/sessions': typeof AuthenticatedAccountSessionsRoute
+  '/_authenticated/account/verification': typeof AuthenticatedAccountVerificationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -168,9 +261,18 @@ export interface FileRouteTypes {
     | '/referral'
     | '/register'
     | '/vip'
+    | '/account'
+    | '/wallets'
     | '/blog/$slug'
     | '/help/terms'
     | '/blog/'
+    | '/account/2fa'
+    | '/account/activities'
+    | '/account/password'
+    | '/account/profile'
+    | '/account/referrals'
+    | '/account/sessions'
+    | '/account/verification'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -185,12 +287,22 @@ export interface FileRouteTypes {
     | '/referral'
     | '/register'
     | '/vip'
+    | '/account'
+    | '/wallets'
     | '/blog/$slug'
     | '/help/terms'
     | '/blog'
+    | '/account/2fa'
+    | '/account/activities'
+    | '/account/password'
+    | '/account/profile'
+    | '/account/referrals'
+    | '/account/sessions'
+    | '/account/verification'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about-us'
     | '/affiliate'
     | '/buy-crypto'
@@ -202,13 +314,23 @@ export interface FileRouteTypes {
     | '/referral'
     | '/register'
     | '/vip'
+    | '/_authenticated/account'
+    | '/_authenticated/wallets'
     | '/blog/$slug'
     | '/help/terms'
     | '/blog/'
+    | '/_authenticated/account/2fa'
+    | '/_authenticated/account/activities'
+    | '/_authenticated/account/password'
+    | '/_authenticated/account/profile'
+    | '/_authenticated/account/referrals'
+    | '/_authenticated/account/sessions'
+    | '/_authenticated/account/verification'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutUsRoute: typeof AboutUsRoute
   AffiliateRoute: typeof AffiliateRoute
   BuyCryptoRoute: typeof BuyCryptoRoute
@@ -304,6 +426,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutUsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -332,11 +461,112 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/wallets': {
+      id: '/_authenticated/wallets'
+      path: '/wallets'
+      fullPath: '/wallets'
+      preLoaderRoute: typeof AuthenticatedWalletsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/verification': {
+      id: '/_authenticated/account/verification'
+      path: '/verification'
+      fullPath: '/account/verification'
+      preLoaderRoute: typeof AuthenticatedAccountVerificationRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
+    }
+    '/_authenticated/account/sessions': {
+      id: '/_authenticated/account/sessions'
+      path: '/sessions'
+      fullPath: '/account/sessions'
+      preLoaderRoute: typeof AuthenticatedAccountSessionsRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
+    }
+    '/_authenticated/account/referrals': {
+      id: '/_authenticated/account/referrals'
+      path: '/referrals'
+      fullPath: '/account/referrals'
+      preLoaderRoute: typeof AuthenticatedAccountReferralsRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
+    }
+    '/_authenticated/account/profile': {
+      id: '/_authenticated/account/profile'
+      path: '/profile'
+      fullPath: '/account/profile'
+      preLoaderRoute: typeof AuthenticatedAccountProfileRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
+    }
+    '/_authenticated/account/password': {
+      id: '/_authenticated/account/password'
+      path: '/password'
+      fullPath: '/account/password'
+      preLoaderRoute: typeof AuthenticatedAccountPasswordRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
+    }
+    '/_authenticated/account/activities': {
+      id: '/_authenticated/account/activities'
+      path: '/activities'
+      fullPath: '/account/activities'
+      preLoaderRoute: typeof AuthenticatedAccountActivitiesRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
+    }
+    '/_authenticated/account/2fa': {
+      id: '/_authenticated/account/2fa'
+      path: '/2fa'
+      fullPath: '/account/2fa'
+      preLoaderRoute: typeof AuthenticatedAccount2faRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
+    }
   }
 }
 
+interface AuthenticatedAccountRouteChildren {
+  AuthenticatedAccount2faRoute: typeof AuthenticatedAccount2faRoute
+  AuthenticatedAccountActivitiesRoute: typeof AuthenticatedAccountActivitiesRoute
+  AuthenticatedAccountPasswordRoute: typeof AuthenticatedAccountPasswordRoute
+  AuthenticatedAccountProfileRoute: typeof AuthenticatedAccountProfileRoute
+  AuthenticatedAccountReferralsRoute: typeof AuthenticatedAccountReferralsRoute
+  AuthenticatedAccountSessionsRoute: typeof AuthenticatedAccountSessionsRoute
+  AuthenticatedAccountVerificationRoute: typeof AuthenticatedAccountVerificationRoute
+}
+
+const AuthenticatedAccountRouteChildren: AuthenticatedAccountRouteChildren = {
+  AuthenticatedAccount2faRoute: AuthenticatedAccount2faRoute,
+  AuthenticatedAccountActivitiesRoute: AuthenticatedAccountActivitiesRoute,
+  AuthenticatedAccountPasswordRoute: AuthenticatedAccountPasswordRoute,
+  AuthenticatedAccountProfileRoute: AuthenticatedAccountProfileRoute,
+  AuthenticatedAccountReferralsRoute: AuthenticatedAccountReferralsRoute,
+  AuthenticatedAccountSessionsRoute: AuthenticatedAccountSessionsRoute,
+  AuthenticatedAccountVerificationRoute: AuthenticatedAccountVerificationRoute,
+}
+
+const AuthenticatedAccountRouteWithChildren =
+  AuthenticatedAccountRoute._addFileChildren(AuthenticatedAccountRouteChildren)
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRouteWithChildren
+  AuthenticatedWalletsRoute: typeof AuthenticatedWalletsRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRouteWithChildren,
+  AuthenticatedWalletsRoute: AuthenticatedWalletsRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutUsRoute: AboutUsRoute,
   AffiliateRoute: AffiliateRoute,
   BuyCryptoRoute: BuyCryptoRoute,

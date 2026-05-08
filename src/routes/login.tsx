@@ -5,11 +5,12 @@ import { Logo } from "@/components/Layout";
 import { useState } from "react";
 import { z } from "zod";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { auth, db, googleProvider } from "@/lib/firebase";
+import { auth, googleProvider } from "@/lib/firebase";
 import { toast } from "sonner";
+import { ensureUserDoc, logActivity, logSession } from "@/lib/userData";
 
 export const Route = createFileRoute("/login")({
+  validateSearch: (s: Record<string, unknown>) => ({ redirect: typeof s.redirect === "string" ? s.redirect : "/" }),
   head: () => ({
     meta: [
       { title: "Log In to XMV" },
@@ -26,9 +27,16 @@ const schema = z.object({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const after = async (uid: string) => {
+    await logActivity(uid, "login");
+    await logSession(uid);
+    navigate({ to: redirect || "/" });
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,9 +44,10 @@ function LoginPage() {
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, parsed.data.email, parsed.data.password);
+      const res = await signInWithEmailAndPassword(auth, parsed.data.email, parsed.data.password);
+      await ensureUserDoc(res.user);
       toast.success("Welcome back");
-      navigate({ to: "/" });
+      await after(res.user.uid);
     } catch (err: any) {
       toast.error(err.message ?? "Login failed");
     } finally {
@@ -50,12 +59,8 @@ function LoginPage() {
     setLoading(true);
     try {
       const res = await signInWithPopup(auth, googleProvider);
-      await setDoc(
-        doc(db, "users", res.user.uid),
-        { email: res.user.email, displayName: res.user.displayName, createdAt: serverTimestamp() },
-        { merge: true }
-      );
-      navigate({ to: "/" });
+      await ensureUserDoc(res.user);
+      await after(res.user.uid);
     } catch (err: any) {
       toast.error(err.message ?? "Google sign-in failed");
     } finally {

@@ -238,12 +238,9 @@ function WalletsPage() {
             <Card key={b.id} className="p-6 border-border">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold">{b.asset}</h3>
-                <span className="text-xs text-muted-foreground">free</span>
+                <span className="text-xs text-muted-foreground">balance</span>
               </div>
-              <div className="text-3xl font-bold mb-1">{(b.free ?? 0).toFixed(6)}</div>
-              <div className="text-xs text-muted-foreground mb-4">
-                Locked: {(b.locked ?? 0).toFixed(6)}
-              </div>
+              <div className="text-3xl font-bold mb-4">{(b.free ?? 0).toFixed(6)}</div>
               <div className="flex gap-2">
                 <Input
                   placeholder="Amount"

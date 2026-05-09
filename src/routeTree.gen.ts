@@ -27,6 +27,7 @@ import { Route as HelpTermsRouteImport } from './routes/help.terms'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedWalletsRouteImport } from './routes/_authenticated/wallets'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as ApiPublicNowpaymentsWebhookRouteImport } from './routes/api/public/nowpayments-webhook'
 import { Route as AuthenticatedAccountVerificationRouteImport } from './routes/_authenticated/account.verification'
 import { Route as AuthenticatedAccountSessionsRouteImport } from './routes/_authenticated/account.sessions'
 import { Route as AuthenticatedAccountReferralsRouteImport } from './routes/_authenticated/account.referrals'
@@ -124,6 +125,12 @@ const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ApiPublicNowpaymentsWebhookRoute =
+  ApiPublicNowpaymentsWebhookRouteImport.update({
+    id: '/api/public/nowpayments-webhook',
+    path: '/api/public/nowpayments-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAccountVerificationRoute =
   AuthenticatedAccountVerificationRouteImport.update({
     id: '/verification',
@@ -191,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/account/referrals': typeof AuthenticatedAccountReferralsRoute
   '/account/sessions': typeof AuthenticatedAccountSessionsRoute
   '/account/verification': typeof AuthenticatedAccountVerificationRoute
+  '/api/public/nowpayments-webhook': typeof ApiPublicNowpaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -217,6 +225,7 @@ export interface FileRoutesByTo {
   '/account/referrals': typeof AuthenticatedAccountReferralsRoute
   '/account/sessions': typeof AuthenticatedAccountSessionsRoute
   '/account/verification': typeof AuthenticatedAccountVerificationRoute
+  '/api/public/nowpayments-webhook': typeof ApiPublicNowpaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -245,6 +254,7 @@ export interface FileRoutesById {
   '/_authenticated/account/referrals': typeof AuthenticatedAccountReferralsRoute
   '/_authenticated/account/sessions': typeof AuthenticatedAccountSessionsRoute
   '/_authenticated/account/verification': typeof AuthenticatedAccountVerificationRoute
+  '/api/public/nowpayments-webhook': typeof ApiPublicNowpaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -273,6 +283,7 @@ export interface FileRouteTypes {
     | '/account/referrals'
     | '/account/sessions'
     | '/account/verification'
+    | '/api/public/nowpayments-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -299,6 +310,7 @@ export interface FileRouteTypes {
     | '/account/referrals'
     | '/account/sessions'
     | '/account/verification'
+    | '/api/public/nowpayments-webhook'
   id:
     | '__root__'
     | '/'
@@ -326,6 +338,7 @@ export interface FileRouteTypes {
     | '/_authenticated/account/referrals'
     | '/_authenticated/account/sessions'
     | '/_authenticated/account/verification'
+    | '/api/public/nowpayments-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -345,6 +358,7 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   HelpTermsRoute: typeof HelpTermsRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  ApiPublicNowpaymentsWebhookRoute: typeof ApiPublicNowpaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -475,6 +489,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/public/nowpayments-webhook': {
+      id: '/api/public/nowpayments-webhook'
+      path: '/api/public/nowpayments-webhook'
+      fullPath: '/api/public/nowpayments-webhook'
+      preLoaderRoute: typeof ApiPublicNowpaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/account/verification': {
       id: '/_authenticated/account/verification'
       path: '/verification'
@@ -581,6 +602,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   HelpTermsRoute: HelpTermsRoute,
   BlogIndexRoute: BlogIndexRoute,
+  ApiPublicNowpaymentsWebhookRoute: ApiPublicNowpaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -2,21 +2,37 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/PageHeader";
 import { Card } from "@/components/ui/card";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { useEffect, useState } from "react";
 
-const coins = [
-  { sym: "BTC", name: "Bitcoin", price: "$85,657.65", change: 0.32, vol: "$18.68B", cap: "$1.69T", color: "#F7931A" },
-  { sym: "ETH", name: "Ethereum", price: "$2,520.91", change: 0.34, vol: "$8.04B", cap: "$303B", color: "#627EEA" },
-  { sym: "BNB", name: "Binance Coin", price: "$675.12", change: -0.13, vol: "$604.7M", cap: "$98B", color: "#F3BA2F" },
-  { sym: "BCH", name: "Bitcoin Cash", price: "$513.94", change: 3.7, vol: "$231M", cap: "$10B", color: "#0AC18E" },
-  { sym: "TON", name: "Toncoin", price: "$1.45733", change: 1.37, vol: "$448M", cap: "$5B", color: "#0098EA" },
-  { sym: "TRX", name: "Tron", price: "$0.36384", change: 2.27, vol: "$3.12B", cap: "$32B", color: "#FF060A" },
-  { sym: "SHIB", name: "Shiba Inu", price: "$0.0000063", change: -0.32, vol: "$80M", cap: "$3.7B", color: "#FFA409" },
-  { sym: "SOL", name: "Solana", price: "$91.7671", change: -0.02, vol: "$1.79B", cap: "$43B", color: "#9945FF" },
-  { sym: "XRP", name: "XRP", price: "$0.5234", change: 1.12, vol: "$1.2B", cap: "$28B", color: "#23292F" },
-  { sym: "ADA", name: "Cardano", price: "$0.4125", change: -1.23, vol: "$320M", cap: "$14B", color: "#0033AD" },
-  { sym: "DOGE", name: "Dogecoin", price: "$0.1234", change: 4.56, vol: "$890M", cap: "$17B", color: "#C2A633" },
-  { sym: "AVAX", name: "Avalanche", price: "$28.45", change: 2.11, vol: "$430M", cap: "$11B", color: "#E84142" },
+type Coin = {
+  id: string;
+  sym: string;
+  name: string;
+  color: string;
+  price: number;
+  change: number;
+  vol: number;
+  cap: number;
+};
+
+const COINS: Array<{ id: string; sym: string; name: string; color: string }> = [
+  { id: "bitcoin", sym: "BTC", name: "Bitcoin", color: "#F7931A" },
+  { id: "ethereum", sym: "ETH", name: "Ethereum", color: "#627EEA" },
+  { id: "binancecoin", sym: "BNB", name: "Binance Coin", color: "#F3BA2F" },
+  { id: "bitcoin-cash", sym: "BCH", name: "Bitcoin Cash", color: "#0AC18E" },
+  { id: "the-open-network", sym: "TON", name: "Toncoin", color: "#0098EA" },
+  { id: "tron", sym: "TRX", name: "Tron", color: "#FF060A" },
+  { id: "shiba-inu", sym: "SHIB", name: "Shiba Inu", color: "#FFA409" },
+  { id: "solana", sym: "SOL", name: "Solana", color: "#9945FF" },
+  { id: "ripple", sym: "XRP", name: "XRP", color: "#23292F" },
+  { id: "cardano", sym: "ADA", name: "Cardano", color: "#0033AD" },
+  { id: "dogecoin", sym: "DOGE", name: "Dogecoin", color: "#C2A633" },
+  { id: "avalanche-2", sym: "AVAX", name: "Avalanche", color: "#E84142" },
 ];
+
+const MARKUP = 1.10;
+const TTL = 24 * 60 * 60 * 1000;
+const CACHE_KEY = "xmv:prices:v1";
 
 export const Route = createFileRoute("/prices")({
   head: () => ({
@@ -28,10 +44,90 @@ export const Route = createFileRoute("/prices")({
   component: PricesPage,
 });
 
+function fmtPrice(n: number) {
+  if (n >= 1) return `$${n.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
+  if (n >= 0.01) return `$${n.toFixed(4)}`;
+  return `$${n.toPrecision(3)}`;
+}
+function fmtBig(n: number) {
+  if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`;
+  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
+  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
+  return `$${n.toLocaleString()}`;
+}
+
+async function fetchCoins(): Promise<Coin[]> {
+  const ids = COINS.map((c) => c.id).join(",");
+  const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=24h`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch prices");
+  const data: any[] = await res.json();
+  return COINS.map((c) => {
+    const m = data.find((d) => d.id === c.id);
+    return {
+      ...c,
+      price: (m?.current_price ?? 0) * MARKUP,
+      change: m?.price_change_percentage_24h ?? 0,
+      vol: (m?.total_volume ?? 0) * MARKUP,
+      cap: (m?.market_cap ?? 0) * MARKUP,
+    };
+  });
+}
+
 function PricesPage() {
+  const [coins, setCoins] = useState<Coin[] | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const raw = typeof window !== "undefined" ? localStorage.getItem(CACHE_KEY) : null;
+        if (raw) {
+          const cached = JSON.parse(raw) as { ts: number; coins: Coin[] };
+          if (Date.now() - cached.ts < TTL) {
+            if (!cancelled) {
+              setCoins(cached.coins);
+              setUpdatedAt(cached.ts);
+            }
+            return;
+          }
+        }
+        setLoading(true);
+        const fresh = await fetchCoins();
+        if (cancelled) return;
+        const ts = Date.now();
+        setCoins(fresh);
+        setUpdatedAt(ts);
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts, coins: fresh }));
+      } catch {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (raw && !cancelled) {
+          const cached = JSON.parse(raw) as { ts: number; coins: Coin[] };
+          setCoins(cached.coins);
+          setUpdatedAt(cached.ts);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <>
-      <PageHeader title="Crypto Prices" subtitle="Live market data updated in real time across the top digital assets." />
+      <PageHeader
+        title="Crypto Prices"
+        subtitle={
+          updatedAt
+            ? `Live market data. Last updated ${new Date(updatedAt).toLocaleString()} — refreshes every 24h.`
+            : "Live market data updated daily across the top digital assets."
+        }
+      />
       <section className="container mx-auto px-4 py-12">
         <Card className="overflow-hidden border-border">
           <div className="overflow-x-auto">
@@ -47,7 +143,16 @@ function PricesPage() {
                 </tr>
               </thead>
               <tbody>
-                {coins.map((c, i) => (
+                {!coins && loading &&
+                  Array.from({ length: 8 }).map((_, i) => (
+                    <tr key={i} className="border-t border-border">
+                      <td className="py-4 px-6 text-muted-foreground">{i + 1}</td>
+                      <td className="py-4 px-6 text-muted-foreground" colSpan={5}>
+                        Loading…
+                      </td>
+                    </tr>
+                  ))}
+                {coins?.map((c, i) => (
                   <tr key={c.sym} className="border-t border-border hover:bg-secondary/30">
                     <td className="py-4 px-6 text-muted-foreground">{i + 1}</td>
                     <td className="py-4 px-6">
@@ -59,15 +164,15 @@ function PricesPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="text-right font-semibold px-6">{c.price}</td>
+                    <td className="text-right font-semibold px-6">{fmtPrice(c.price)}</td>
                     <td className="text-right px-6">
                       <span className={`inline-flex items-center gap-1 font-medium ${c.change >= 0 ? "text-brand" : "text-destructive"}`}>
                         {c.change >= 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
-                        {c.change >= 0 ? "+" : ""}{c.change}%
+                        {c.change >= 0 ? "+" : ""}{c.change.toFixed(2)}%
                       </span>
                     </td>
-                    <td className="text-right text-muted-foreground hidden md:table-cell px-6">{c.vol}</td>
-                    <td className="text-right text-muted-foreground hidden lg:table-cell px-6">{c.cap}</td>
+                    <td className="text-right text-muted-foreground hidden md:table-cell px-6">{fmtBig(c.vol)}</td>
+                    <td className="text-right text-muted-foreground hidden lg:table-cell px-6">{fmtBig(c.cap)}</td>
                   </tr>
                 ))}
               </tbody>

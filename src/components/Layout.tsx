@@ -1,13 +1,15 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Globe, Moon, Menu, LogOut, Wallet, User as UserIcon } from "lucide-react";
+import { Globe, Moon, Sun, Menu, LogOut, Wallet, User as UserIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 export function Logo() {
   return (

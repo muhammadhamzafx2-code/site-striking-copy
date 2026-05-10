@@ -32,14 +32,18 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "xmvwallet" },
+      { name: "description", content: "Exonax Mirror is a web application that replicates the functionality of exonax.com, offering a personalized cryptocurrency wallet experience." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "xmvwallet" },
+      { property: "og:description", content: "Exonax Mirror is a web application that replicates the functionality of exonax.com, offering a personalized cryptocurrency wallet experience." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "xmvwallet" },
+      { name: "twitter:description", content: "Exonax Mirror is a web application that replicates the functionality of exonax.com, offering a personalized cryptocurrency wallet experience." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9fd9d281-78c5-4b70-9ea8-17ca639b0b01/id-preview-12559a15--bf9fca7c-ef8c-4c41-baef-812c79ba55d3.lovable.app-1778388129708.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9fd9d281-78c5-4b70-9ea8-17ca639b0b01/id-preview-12559a15--bf9fca7c-ef8c-4c41-baef-812c79ba55d3.lovable.app-1778388129708.png" },
     ],
     links: [
       {

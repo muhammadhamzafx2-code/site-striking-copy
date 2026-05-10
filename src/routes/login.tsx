@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { ensureUserDoc, logActivity, logSession } from "@/lib/userData";
 
 export const Route = createFileRoute("/login")({
-  validateSearch: (s: Record<string, unknown>) => ({ redirect: typeof s.redirect === "string" ? s.redirect : "/" }),
+  validateSearch: (s: Record<string, unknown>) => ({ redirect: typeof s.redirect === "string" ? s.redirect : "/wallets" }),
   head: () => ({
     meta: [
       { title: "Log In to XMV" },

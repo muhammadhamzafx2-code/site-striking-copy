@@ -34,6 +34,88 @@ const navLinks = [
   { to: "/blog", label: "Blog" },
 ] as const;
 
+function ThemeToggle() {
+  const [dark, setDark] = useState(true);
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    const isDark = saved ? saved === "dark" : document.documentElement.classList.contains("dark");
+    setDark(isDark);
+    document.documentElement.classList.toggle("dark", isDark);
+  }, []);
+  const toggle = () => {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  };
+  return (
+    <button
+      onClick={toggle}
+      aria-label="Toggle theme"
+      className="grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground hover:text-foreground transition"
+    >
+      {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+    </button>
+  );
+}
+
+function MobileMenu() {
+  const [open, setOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <button
+          aria-label="Open menu"
+          className="md:hidden grid h-9 w-9 place-items-center rounded-full bg-secondary"
+        >
+          <Menu className="h-4 w-4" />
+        </button>
+      </SheetTrigger>
+      <SheetContent side="right" className="w-72">
+        <SheetHeader>
+          <SheetTitle>Menu</SheetTitle>
+        </SheetHeader>
+        <nav className="mt-6 flex flex-col gap-1 text-sm font-medium">
+          {navLinks.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              onClick={() => setOpen(false)}
+              className="px-3 py-2 rounded-md hover:bg-secondary"
+              activeProps={{ className: "px-3 py-2 rounded-md bg-secondary text-foreground" }}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <div className="my-3 h-px bg-border" />
+          {user ? (
+            <>
+              <Link to="/wallets" onClick={() => setOpen(false)} className="px-3 py-2 rounded-md hover:bg-secondary flex items-center gap-2">
+                <Wallet className="h-4 w-4" /> Wallets
+              </Link>
+              <Link to="/account/profile" onClick={() => setOpen(false)} className="px-3 py-2 rounded-md hover:bg-secondary flex items-center gap-2">
+                <UserIcon className="h-4 w-4" /> Account
+              </Link>
+              <button
+                onClick={() => { signOut(); setOpen(false); }}
+                className="px-3 py-2 rounded-md hover:bg-secondary flex items-center gap-2 text-left"
+              >
+                <LogOut className="h-4 w-4" /> Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" onClick={() => setOpen(false)} className="px-3 py-2 rounded-md hover:bg-secondary">Log In</Link>
+              <Link to="/register" onClick={() => setOpen(false)} className="px-3 py-2 rounded-md bg-brand text-brand-foreground font-semibold text-center">Sign Up</Link>
+            </>
+          )}
+        </nav>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
 function Header() {
   const { user, signOut } = useAuth();
   const initial = (user?.displayName || user?.email || "?").charAt(0).toUpperCase();
@@ -86,9 +168,16 @@ function Header() {
               </Link>
             </>
           )}
-          <button className="ml-2 hidden sm:grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground"><Globe className="h-4 w-4" /></button>
-          <button className="hidden sm:grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground"><Moon className="h-4 w-4" /></button>
-          <button className="md:hidden grid h-9 w-9 place-items-center rounded-full bg-secondary"><Menu className="h-4 w-4" /></button>
+          <button
+            aria-label="Language"
+            className="ml-2 hidden sm:grid h-9 w-9 place-items-center rounded-full bg-secondary text-muted-foreground hover:text-foreground transition"
+          >
+            <Globe className="h-4 w-4" />
+          </button>
+          <div className="hidden sm:block">
+            <ThemeToggle />
+          </div>
+          <MobileMenu />
         </div>
       </div>
     </header>

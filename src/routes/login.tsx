@@ -35,7 +35,7 @@ function LoginPage() {
   const after = async (uid: string) => {
     await logActivity(uid, "login");
     await logSession(uid);
-    navigate({ to: redirect || "/" });
+    navigate({ to: redirect || "/wallets" });
   };
 
   const onSubmit = async (e: React.FormEvent) => {

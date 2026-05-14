@@ -347,7 +347,7 @@ function BuyCryptoPage() {
                   {cardLoading ? <Loader2 className="animate-spin" /> : user ? "Pay with Card" : "Sign in to Buy"}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
-                  Test mode · Use card 4242 4242 4242 4242
+                  Secure checkout · Powered by Stripe
                 </p>
               </TabsContent>
 

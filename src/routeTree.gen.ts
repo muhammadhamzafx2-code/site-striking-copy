@@ -36,6 +36,7 @@ import { Route as AuthenticatedAccountPasswordRouteImport } from './routes/_auth
 import { Route as AuthenticatedAccountActivitiesRouteImport } from './routes/_authenticated/account.activities'
 import { Route as AuthenticatedAccount2faRouteImport } from './routes/_authenticated/account.2fa'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicPaymentsFlutterwaveWebhookRouteImport } from './routes/api/public/payments/flutterwave-webhook'
 
 const VipRoute = VipRouteImport.update({
   id: '/vip',
@@ -179,6 +180,12 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicPaymentsFlutterwaveWebhookRoute =
+  ApiPublicPaymentsFlutterwaveWebhookRouteImport.update({
+    id: '/api/public/payments/flutterwave-webhook',
+    path: '/api/public/payments/flutterwave-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/account/sessions': typeof AuthenticatedAccountSessionsRoute
   '/account/verification': typeof AuthenticatedAccountVerificationRoute
   '/api/public/nowpayments-webhook': typeof ApiPublicNowpaymentsWebhookRoute
+  '/api/public/payments/flutterwave-webhook': typeof ApiPublicPaymentsFlutterwaveWebhookRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -234,6 +242,7 @@ export interface FileRoutesByTo {
   '/account/sessions': typeof AuthenticatedAccountSessionsRoute
   '/account/verification': typeof AuthenticatedAccountVerificationRoute
   '/api/public/nowpayments-webhook': typeof ApiPublicNowpaymentsWebhookRoute
+  '/api/public/payments/flutterwave-webhook': typeof ApiPublicPaymentsFlutterwaveWebhookRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -264,6 +273,7 @@ export interface FileRoutesById {
   '/_authenticated/account/sessions': typeof AuthenticatedAccountSessionsRoute
   '/_authenticated/account/verification': typeof AuthenticatedAccountVerificationRoute
   '/api/public/nowpayments-webhook': typeof ApiPublicNowpaymentsWebhookRoute
+  '/api/public/payments/flutterwave-webhook': typeof ApiPublicPaymentsFlutterwaveWebhookRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -294,6 +304,7 @@ export interface FileRouteTypes {
     | '/account/sessions'
     | '/account/verification'
     | '/api/public/nowpayments-webhook'
+    | '/api/public/payments/flutterwave-webhook'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -322,6 +333,7 @@ export interface FileRouteTypes {
     | '/account/sessions'
     | '/account/verification'
     | '/api/public/nowpayments-webhook'
+    | '/api/public/payments/flutterwave-webhook'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -351,6 +363,7 @@ export interface FileRouteTypes {
     | '/_authenticated/account/sessions'
     | '/_authenticated/account/verification'
     | '/api/public/nowpayments-webhook'
+    | '/api/public/payments/flutterwave-webhook'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -372,6 +385,7 @@ export interface RootRouteChildren {
   HelpTermsRoute: typeof HelpTermsRoute
   BlogIndexRoute: typeof BlogIndexRoute
   ApiPublicNowpaymentsWebhookRoute: typeof ApiPublicNowpaymentsWebhookRoute
+  ApiPublicPaymentsFlutterwaveWebhookRoute: typeof ApiPublicPaymentsFlutterwaveWebhookRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -566,6 +580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/flutterwave-webhook': {
+      id: '/api/public/payments/flutterwave-webhook'
+      path: '/api/public/payments/flutterwave-webhook'
+      fullPath: '/api/public/payments/flutterwave-webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsFlutterwaveWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -624,6 +645,8 @@ const rootRouteChildren: RootRouteChildren = {
   HelpTermsRoute: HelpTermsRoute,
   BlogIndexRoute: BlogIndexRoute,
   ApiPublicNowpaymentsWebhookRoute: ApiPublicNowpaymentsWebhookRoute,
+  ApiPublicPaymentsFlutterwaveWebhookRoute:
+    ApiPublicPaymentsFlutterwaveWebhookRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport

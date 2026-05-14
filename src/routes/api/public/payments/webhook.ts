@@ -274,6 +274,81 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
           }
         }
 
+        // ---------- VIP subscription events ----------
+        const isSubEvent =
+          type === "customer.subscription.created" ||
+          type === "customer.subscription.updated" ||
+          type === "customer.subscription.deleted" ||
+          (type === "checkout.session.completed" && data?.mode === "subscription");
+
+        if (isSubEvent) {
+          const subObj = type.startsWith("customer.subscription.") ? data : null;
+          const uid: string | undefined = meta.uid;
+          const tier: string | undefined =
+            meta.vip_tier || subObj?.metadata?.vip_tier;
+          const priceKey: string | undefined =
+            meta.price_key || subObj?.metadata?.price_key;
+
+          if (uid) {
+            const saRaw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+            if (!saRaw) return new Response("ok (no admin)", { status: 200 });
+            let creds: { client_email: string; private_key: string; project_id: string };
+            try { creds = JSON.parse(saRaw); } catch { return new Response("ok", { status: 200 }); }
+            const token = await getAccessToken(creds);
+            const projectId = creds.project_id;
+
+            let status: string = subObj?.status ?? "active";
+            const cancelAtPeriodEnd: boolean = !!subObj?.cancel_at_period_end;
+            const periodEndUnix: number | undefined =
+              subObj?.items?.data?.[0]?.current_period_end ??
+              subObj?.current_period_end;
+            const periodEndIso = periodEndUnix
+              ? new Date(periodEndUnix * 1000).toISOString()
+              : null;
+
+            if (type === "customer.subscription.deleted") status = "canceled";
+            const hasAccess =
+              status === "active" ||
+              status === "trialing" ||
+              status === "past_due" ||
+              (status === "canceled" && periodEndUnix && periodEndUnix * 1000 > Date.now());
+
+            await fsPatch(projectId, token, `users/${uid}`, {
+              vipTier: hasAccess ? (tier ?? "silver") : null,
+              vipStatus: status,
+              vipPriceKey: hasAccess ? (priceKey ?? null) : null,
+              vipCancelAtPeriodEnd: cancelAtPeriodEnd,
+              vipExpiresAt: periodEndIso,
+              vipUpdatedAt: new Date().toISOString(),
+            });
+
+            const subId: string = subObj?.id ?? data?.subscription ?? data?.id ?? "current";
+            await fsPatch(projectId, token, `users/${uid}/subscriptions/${subId}`, {
+              tier: tier ?? null,
+              priceKey: priceKey ?? null,
+              status,
+              cancelAtPeriodEnd,
+              currentPeriodEnd: periodEndIso,
+              updatedAt: new Date().toISOString(),
+            });
+
+            const activityType =
+              type === "checkout.session.completed"
+                ? "vip_subscribed"
+                : type === "customer.subscription.deleted"
+                  ? "vip_canceled"
+                  : "vip_updated";
+            await fsCreate(projectId, token, `users/${uid}/activities`, {
+              type: activityType,
+              tier: tier ?? null,
+              priceKey: priceKey ?? null,
+              status,
+              cancelAtPeriodEnd,
+              createdAt: new Date().toISOString(),
+            });
+          }
+        }
+
         return new Response("ok", { status: 200 });
       },
     },

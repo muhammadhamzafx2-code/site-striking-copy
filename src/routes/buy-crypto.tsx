@@ -19,7 +19,8 @@ import {
   createDeposit,
   getPaymentStatus,
 } from "@/lib/nowpayments.functions";
-import { createCardCheckout, getCryptoQuote } from "@/lib/stripe.functions";
+import { getCryptoQuote } from "@/lib/stripe.functions";
+import { createFlutterwaveCheckout } from "@/lib/flutterwave.functions";
 import { db } from "@/lib/firebase";
 import { doc, setDoc, updateDoc, serverTimestamp, collection, getDocs } from "firebase/firestore";
 import { logActivity } from "@/lib/userData";
@@ -60,7 +61,7 @@ function BuyCryptoPage() {
   const fetchCurrencies = useServerFn(getAvailableCurrencies);
   const submitDeposit = useServerFn(createDeposit);
   const fetchStatus = useServerFn(getPaymentStatus);
-  const startCardCheckout = useServerFn(createCardCheckout);
+  const startCardCheckout = useServerFn(createFlutterwaveCheckout);
   const fetchQuote = useServerFn(getCryptoQuote);
 
   // Crypto tab state
@@ -230,6 +231,7 @@ function BuyCryptoPage() {
       const r = await startCardCheckout({
         data: {
           uid: user.uid,
+          email: user.email ?? undefined,
           coin: cardCoin,
           usd,
           origin: window.location.origin,
@@ -239,9 +241,10 @@ function BuyCryptoPage() {
       // Pre-create pending deposit record so the user has visible history
       try {
         await setDoc(
-          doc(db, "users", user.uid, "deposits", r.session_id),
+          doc(db, "users", user.uid, "deposits", r.tx_ref),
           {
             method: "card",
+            provider: "flutterwave",
             status: "pending",
             asset: cardCoin.toUpperCase(),
             pay_currency: cardCoin.toUpperCase(),
@@ -347,7 +350,7 @@ function BuyCryptoPage() {
                   {cardLoading ? <Loader2 className="animate-spin" /> : user ? "Pay with Card" : "Sign in to Buy"}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
-                  Secure checkout · Powered by Stripe
+                  Secure checkout · Powered by Flutterwave
                 </p>
               </TabsContent>
 

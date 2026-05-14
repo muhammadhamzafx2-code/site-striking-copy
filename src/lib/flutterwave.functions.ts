@@ -17,16 +17,53 @@ const CG_IDS: Record<string, string> = {
   shib: "shiba-inu", link: "chainlink", atom: "cosmos", near: "near",
 };
 
+async function fetchJson(url: string, attempts = 3): Promise<any> {
+  let lastErr: any;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const r = await fetch(url, { headers: { accept: "application/json" } });
+      if (r.ok) return await r.json();
+      lastErr = new Error(`HTTP ${r.status}`);
+    } catch (e) {
+      lastErr = e;
+    }
+    await new Promise((res) => setTimeout(res, 300 * (i + 1)));
+  }
+  throw lastErr ?? new Error("fetch failed");
+}
+
 async function getUsdPrice(coin: string): Promise<number> {
   const id = CG_IDS[coin.toLowerCase()] ?? coin.toLowerCase();
-  const r = await fetch(
-    `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`,
-  );
-  if (!r.ok) throw new Error(`Price lookup failed (${r.status})`);
-  const j = (await r.json()) as Record<string, { usd?: number }>;
-  const p = j[id]?.usd;
-  if (!p || p <= 0) throw new Error(`No price for ${coin}`);
-  return p;
+  // Try CoinGecko first
+  try {
+    const j = await fetchJson(
+      `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`,
+      2,
+    );
+    const p = j?.[id]?.usd;
+    if (p && p > 0) return p;
+  } catch {}
+  // Fallback: Coinbase spot price (uses symbol)
+  try {
+    const sym = coin.toUpperCase();
+    const j = await fetchJson(
+      `https://api.coinbase.com/v2/prices/${sym}-USD/spot`,
+      2,
+    );
+    const p = Number(j?.data?.amount);
+    if (p && p > 0) return p;
+  } catch {}
+  // Fallback: Binance
+  try {
+    const sym = coin.toUpperCase();
+    const j = await fetchJson(
+      `https://api.binance.com/api/v3/ticker/price?symbol=${sym}USDT`,
+      2,
+    );
+    const p = Number(j?.price);
+    if (p && p > 0) return p;
+  } catch {}
+  throw new Error(`Price lookup failed for ${coin}`);
 }
 
 export const createFlutterwaveCheckout = createServerFn({ method: "POST" })

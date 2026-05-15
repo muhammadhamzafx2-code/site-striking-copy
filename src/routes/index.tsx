@@ -14,8 +14,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Shield, Lock, Zap, FileCheck, TrendingUp, TrendingDown } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Shield, Lock, Zap, FileCheck, TrendingUp, TrendingDown, Wallet } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/useAuth";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
+import { ensureUserDoc } from "@/lib/userData";
 
 export const Route = createFileRoute("/")({
   head: () => ({

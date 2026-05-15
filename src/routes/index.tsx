@@ -64,8 +64,24 @@ const faqs = [
 
 
 function Hero() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const onGoogle = async () => {
+    setGoogleLoading(true);
+    try {
+      const res = await signInWithPopup(auth, googleProvider);
+      await ensureUserDoc(res.user);
+      toast.success("Welcome");
+      navigate({ to: "/wallets" });
+    } catch (err: any) {
+      toast.error(err.message ?? "Google sign-in failed");
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = z.string().trim().email().max(255).safeParse(email);

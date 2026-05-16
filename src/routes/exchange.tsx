@@ -92,7 +92,7 @@ function TradingViewChart({ symbol }: { symbol: string }) {
   return (
     <div
       ref={containerRef}
-      className="tradingview-widget-container w-full h-[520px] rounded-lg overflow-hidden border border-border bg-secondary/40"
+      className="tradingview-widget-container w-full h-[70vh] min-h-[600px] md:min-h-[720px] rounded-lg overflow-hidden border border-border bg-secondary/40"
     />
   );
 }

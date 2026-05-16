@@ -58,7 +58,7 @@ function TradingViewChart({ symbol }: { symbol: string }) {
 
     const widgetDiv = document.createElement("div");
     widgetDiv.className = "tradingview-widget-container__widget";
-    widgetDiv.style.height = "100%";
+    widgetDiv.style.height = "calc(100% - 32px)";
     widgetDiv.style.width = "100%";
     container.appendChild(widgetDiv);
 

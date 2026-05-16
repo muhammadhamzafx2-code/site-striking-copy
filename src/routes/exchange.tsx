@@ -51,9 +51,7 @@ type Ticker = {
 function TradingViewChart({ symbol }: { symbol: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+  const renderWidget = (container: HTMLDivElement) => {
     container.innerHTML = "";
 
     const widgetDiv = document.createElement("div");
@@ -83,8 +81,34 @@ function TradingViewChart({ symbol }: { symbol: string }) {
       support_host: "https://www.tradingview.com",
     });
     container.appendChild(script);
+  };
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    renderWidget(container);
+
+    let lastW = container.clientWidth;
+    let lastH = container.clientHeight;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const { width, height } = entry.contentRect;
+      if (Math.abs(width - lastW) < 2 && Math.abs(height - lastH) < 2) return;
+      lastW = width;
+      lastH = height;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (containerRef.current) renderWidget(containerRef.current);
+      }, 250);
+    });
+    ro.observe(container);
 
     return () => {
+      if (timer) clearTimeout(timer);
+      ro.disconnect();
       container.innerHTML = "";
     };
   }, [symbol]);

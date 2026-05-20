@@ -69,6 +69,7 @@ function Hero() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const onGoogle = async () => {
     setGoogleLoading(true);
     try {
@@ -80,6 +81,19 @@ function Hero() {
       toast.error(err.message ?? "Google sign-in failed");
     } finally {
       setGoogleLoading(false);
+    }
+  };
+  const onApple = async () => {
+    setAppleLoading(true);
+    try {
+      const res = await signInWithPopup(auth, appleProvider);
+      await ensureUserDoc(res.user);
+      toast.success("Welcome");
+      navigate({ to: "/wallets" });
+    } catch (err: any) {
+      toast.error(err.message ?? "Apple sign-in failed");
+    } finally {
+      setAppleLoading(false);
     }
   };
   const onSubmit = async (e: React.FormEvent) => {

@@ -70,6 +70,19 @@ function RegisterPage() {
     }
   };
 
+  const onApple = async () => {
+    setLoading(true);
+    try {
+      const res = await signInWithPopup(auth, appleProvider);
+      await ensureUserDoc(res.user, { referredBy: referralCode || null });
+      await finish(res.user.uid);
+    } catch (err: any) {
+      toast.error(err.message ?? "Apple sign-in failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-16 max-w-md">
       <div className="text-center mb-8 flex justify-center"><Logo /></div>

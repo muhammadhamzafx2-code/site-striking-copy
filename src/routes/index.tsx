@@ -18,7 +18,7 @@ import { Shield, Lock, Zap, FileCheck, TrendingUp, TrendingDown, Wallet } from "
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "@/lib/firebase";
+import { auth, googleProvider, appleProvider } from "@/lib/firebase";
 import { ensureUserDoc } from "@/lib/userData";
 
 export const Route = createFileRoute("/")({

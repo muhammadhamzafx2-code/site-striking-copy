@@ -5,7 +5,7 @@ import { Logo } from "@/components/Layout";
 import { useState } from "react";
 import { z } from "zod";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "@/lib/firebase";
+import { auth, googleProvider, appleProvider } from "@/lib/firebase";
 import { toast } from "sonner";
 import { ensureUserDoc, logActivity, logSession } from "@/lib/userData";
 

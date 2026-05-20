@@ -111,16 +111,3 @@ function LoginPage() {
     </div>
   );
 }
-          </Button>
-        </form>
-        <div className="my-4 text-center text-xs text-muted-foreground">or</div>
-        <Button type="button" variant="outline" className="w-full" onClick={onGoogle} disabled={loading}>
-          Continue with Google
-        </Button>
-        <p className="text-sm text-muted-foreground text-center mt-6">
-          New to XMV? <Link to="/register" className="text-brand">Sign up</Link>
-        </p>
-      </Card>
-    </div>
-  );
-}

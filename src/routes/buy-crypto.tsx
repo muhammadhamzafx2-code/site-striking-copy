@@ -228,6 +228,12 @@ function BuyCryptoPage() {
     if (usd > 10000) return toast.error("Maximum $10,000 per card transaction");
     setCardLoading(true);
     try {
+      // Detect country so Flutterwave charges in local currency (avoids intl card restrictions)
+      let country: string | undefined;
+      try {
+        const t = await fetch("https://www.cloudflare.com/cdn-cgi/trace").then((r) => r.text());
+        country = t.match(/loc=([A-Z]{2})/)?.[1];
+      } catch {}
       const r = await startCardCheckout({
         data: {
           uid: user.uid,
@@ -235,6 +241,7 @@ function BuyCryptoPage() {
           coin: cardCoin,
           usd,
           origin: window.location.origin,
+          country,
         },
       });
       if (!r.ok) throw new Error(r.error);

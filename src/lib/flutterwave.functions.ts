@@ -66,6 +66,36 @@ async function getUsdPrice(coin: string): Promise<number> {
   throw new Error(`Price lookup failed for ${coin}`);
 }
 
+// Country -> Flutterwave-supported local charge currency.
+// Charging in local currency avoids "card cannot be charged" intl restrictions.
+const COUNTRY_CURRENCY: Record<string, string> = {
+  NG: "NGN", KE: "KES", GH: "GHS", UG: "UGX", TZ: "TZS", ZA: "ZAR",
+  RW: "RWF", ZM: "ZMW", MW: "MWK", SL: "SLL", LR: "LRD",
+  CM: "XAF", CG: "XAF", GA: "XAF", TD: "XAF", CF: "XAF", GQ: "XAF",
+  CI: "XOF", SN: "XOF", BJ: "XOF", BF: "XOF", ML: "XOF", NE: "XOF", TG: "XOF",
+  EG: "EGP", MA: "MAD",
+  US: "USD", GB: "GBP",
+  AT: "EUR", BE: "EUR", CY: "EUR", DE: "EUR", EE: "EUR", ES: "EUR", FI: "EUR",
+  FR: "EUR", GR: "EUR", IE: "EUR", IT: "EUR", LT: "EUR", LU: "EUR", LV: "EUR",
+  MT: "EUR", NL: "EUR", PT: "EUR", SI: "EUR", SK: "EUR",
+};
+const ZERO_DECIMAL = new Set(["UGX", "RWF", "XAF", "XOF", "TZS", "SLL"]);
+
+async function getFxRate(from: string, to: string): Promise<number> {
+  if (from === to) return 1;
+  try {
+    const j = await fetchJson(`https://open.er-api.com/v6/latest/${from}`, 2);
+    const r = Number(j?.rates?.[to]);
+    if (r && r > 0) return r;
+  } catch {}
+  try {
+    const j = await fetchJson(`https://api.exchangerate.host/latest?base=${from}&symbols=${to}`, 2);
+    const r = Number(j?.rates?.[to]);
+    if (r && r > 0) return r;
+  } catch {}
+  throw new Error(`FX lookup failed ${from}->${to}`);
+}
+
 export const createFlutterwaveCheckout = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({
@@ -74,6 +104,7 @@ export const createFlutterwaveCheckout = createServerFn({ method: "POST" })
       coin: z.string().min(1).max(20),
       usd: z.number().positive().min(1).max(10000),
       origin: z.string().url(),
+      country: z.string().length(2).optional(),
     }).parse,
   )
   .handler(async ({ data }) => {
@@ -85,10 +116,18 @@ export const createFlutterwaveCheckout = createServerFn({ method: "POST" })
       const symbol = data.coin.toUpperCase();
       const tx_ref = `xmv_${data.uid}_${data.coin}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
+      const cc = (data.country ?? "").toUpperCase();
+      const chargeCurrency = COUNTRY_CURRENCY[cc] ?? "USD";
+      const fxRate = await getFxRate("USD", chargeCurrency);
+      const chargeAmount = data.usd * fxRate;
+      const amountStr = ZERO_DECIMAL.has(chargeCurrency)
+        ? Math.round(chargeAmount).toString()
+        : chargeAmount.toFixed(2);
+
       const body = {
         tx_ref,
-        amount: data.usd.toFixed(2),
-        currency: "USD",
+        amount: amountStr,
+        currency: chargeCurrency,
         redirect_url: `${data.origin}/buy-crypto?status=success&tx_ref=${tx_ref}`,
         customer: {
           email: data.email ?? `${data.uid}@xmvwallet.user`,
@@ -104,6 +143,10 @@ export const createFlutterwaveCheckout = createServerFn({ method: "POST" })
           usd_amount: String(data.usd),
           price_usd: String(price),
           fee_usd: fee.toFixed(4),
+          charge_currency: chargeCurrency,
+          charge_amount: amountStr,
+          fx_rate: String(fxRate),
+          buyer_country: cc || "unknown",
           source: "buy-crypto-card",
         },
       };
